@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil.EqualityHelper
 import org.eclipse.emf.ecore.util.EcoreUtil.UsageCrossReferencer
 
 import static com.google.common.base.Preconditions.checkState
+import java.util.Optional
 
 class GammaEcoreUtil {
 	// Singleton
@@ -218,9 +219,16 @@ class GammaEcoreUtil {
 			).location.toString
 		}
 		else {
+			val ws=ResourcesPlugin.getWorkspace()
+			val root=ws.getRoot()
+			//val file=root.getFile(
+				/*new Path(*/uri.path/*.toString/*.split("file://").last )*/
+			//)
+			//val loc=file.location
+			//loc.toString
 			// Deleting file: from the beginning
 			// Not deleting the trailing '/', as Linux needs it and Windows accepts it
-			uri.toString.substring(("file:"/* + File.separator*/).length)
+			//uri.toString//.substring(("file:"/* + File.separator*/).length)
 		}
 		return new File(URI.decode(location))
 	}
@@ -231,8 +239,8 @@ class GammaEcoreUtil {
 			return uri
 		}
 		val resourceFile = resource.file
-		val projectFile = resourceFile.parentFile.projectFile
-		val location = resourceFile.toString.substring(projectFile.parent.length)
+		val projectFile = resourceFile.parentFile?.projectFile
+		val location = resourceFile.toString.substring(projectFile?.parent?.length)
 		return URI.createPlatformResourceURI(location, true)
 	}
 	
@@ -246,11 +254,12 @@ class GammaEcoreUtil {
 	}
 	
 	def File getProjectFile(File file) {
-		val containedFileNames = file.listFiles.map[it.name]
+		val files=file.listFiles
+		val containedFileNames = files!==null?files.map[it.name]:Collections.EMPTY_LIST
 		if (containedFileNames.contains(".project")) {
 			return file
 		}
-		return file.parentFile.projectFile
+		return file.parentFile?.projectFile
 	}
 	
 	def getIndex(EObject object) {

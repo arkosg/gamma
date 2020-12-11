@@ -872,12 +872,13 @@ public class StatechartLanguageValidator extends AbstractStatechartLanguageValid
 	public void checkTransitionOcclusion(Transition transition) {
 		StateNode sourceState = transition.getSourceState();
 		Collection<Transition> parentTransitions = getOutgoingTransitionsOfAncestors(sourceState);
-		Transition nonDeterministicTransition = checkTransitionDeterminism(transition, parentTransitions);
-		StatechartDefinition statechart = (StatechartDefinition) nonDeterministicTransition.eContainer(); 
-		if (nonDeterministicTransition != null && 
-				statechart.getSchedulingOrder() == SchedulingOrder.TOP_DOWN) {
-			warning("This transitions is occluded by a higher level transition.",
-					StatechartModelPackage.Literals.TRANSITION__TRIGGER);
+		Transition nonDeterministicTransition = checkTransitionDeterminism(transition, parentTransitions);//TODO!!!!!!!
+		if (nonDeterministicTransition != null) {
+			StatechartDefinition statechart = (StatechartDefinition) nonDeterministicTransition.eContainer();
+			if (statechart.getSchedulingOrder() == SchedulingOrder.TOP_DOWN) {
+				warning("This transitions is occluded by a higher level transition.",
+						StatechartModelPackage.Literals.TRANSITION__TRIGGER);
+			}
 		}
 	}
 	
